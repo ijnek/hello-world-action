@@ -1,6 +1,13 @@
-#!/bin/sh -l
+#!/bin/bash
 
-echo "Hello $1"
-time=$(date)
-echo "time=$time" >> $GITHUB_OUTPUT
+# Install dependencies
+sudo apt install git gh
 
+# Create new distro branch
+git checkout rolling
+git branch jazzy
+
+# Push new branch to GitHub
+git push -u origin jazzy
+
+# Update entry in rosdistro

@@ -1,15 +1,16 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const octokit = github.getOctokit(process.env.GITHUB_TOKEN || '');
 
 try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
+  await octokit.rest.git.createTree({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    tree: jazzy,
+  });
+
+} catch (err) {
+  core.warning(`Failed to automatically add repo tag, manually tag with:   'git tag ${tag} ${github.context.sha}'`);
+  core.debug(`${err}`);
+  return false;
 }
